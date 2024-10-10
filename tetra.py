@@ -110,8 +110,8 @@ def get_nearby_stars_compressed_course(vector, radius):
   # create list of nearby stars
   nearby_star_ids = []
   # given error of at most radius in each dimension, compute the space of hash codes to lookup in the sky map
-  hash_code_space = [range(max(low,0), min(high+1,2*num_course_sky_map_bins)) for (low, high) in zip(((vector + 1 - radius) * num_course_sky_map_bins).astype(np.int),
-                                                                                                     ((vector + 1 + radius) * num_course_sky_map_bins).astype(np.int))]
+  hash_code_space = [range(max(low,0), min(high+1,2*num_course_sky_map_bins)) for (low, high) in zip(((vector + 1 - radius) * num_course_sky_map_bins).astype(int),
+                                                                                                     ((vector + 1 + radius) * num_course_sky_map_bins).astype(int))]
   # iterate over hash code space, looking up partitions of the sky map that are within range of the given vector
   for hash_code in itertools.product(*hash_code_space):
     hash_index = hash_code_to_index(hash_code, 2*num_course_sky_map_bins, compressed_course_sky_map_hash_table_size)
@@ -127,7 +127,7 @@ def get_nearby_stars_compressed_course(vector, radius):
       star_id_list = compressed_course_sky_map[slice(*indices)]
       # check if the hash code for the first star matches the bin's hash code
       first_star_vector = star_table[star_id_list[0]]
-      first_star_hash_code = tuple(((first_star_vector+1)*num_course_sky_map_bins).astype(np.int))
+      first_star_hash_code = tuple(((first_star_vector+1)*num_course_sky_map_bins).astype(int))
       if first_star_hash_code == hash_code:
         # iterate over the stars in the sublist, adding them to
         # the nearby stars list if they're within range of the vector
@@ -246,7 +246,7 @@ if read_failed or str(parameters) != stored_parameters:
     # add star vector to star table in position corresponding to its id
     star_table[star_id] = vector
     # find which partition the star occupies in the fine sky map hash table
-    hash_code = ((vector+1)*num_fine_sky_map_bins).astype(np.int)
+    hash_code = ((vector+1)*num_fine_sky_map_bins).astype(int)
     hash_index = hash_code_to_index(hash_code, 2*num_fine_sky_map_bins, fine_sky_map.size)
     # use quadratic probing to find an open space in the fine sky map to insert the star in
     for index in ((hash_index + offset ** 2) % fine_sky_map.size for offset in itertools.count()):
@@ -256,7 +256,7 @@ if read_failed or str(parameters) != stored_parameters:
         fine_sky_map[index] = star_id
         break
     # find which partition the star occupies in the course sky map hash table
-    hash_code = tuple(((vector+1)*num_course_sky_map_bins).astype(np.int))
+    hash_code = tuple(((vector+1)*num_course_sky_map_bins).astype(int))
     # if the partition is empty, create a new list to hold the star
     # if the partition already contains stars, add the star to the list
     course_sky_map[hash_code] = course_sky_map.pop(hash_code, []) + [star_id]
@@ -293,8 +293,8 @@ if read_failed or str(parameters) != stored_parameters:
     # create list of nearby stars
     nearby_star_ids = []
     # given error of at most radius in each dimension, compute the space of hash codes to lookup in the sky map
-    hash_code_space = [range(max(low,0), min(high+1,2*num_course_sky_map_bins)) for (low, high) in zip(((vector + 1 - radius) * num_course_sky_map_bins).astype(np.int),
-                                                                                                       ((vector + 1 + radius) * num_course_sky_map_bins).astype(np.int))]
+    hash_code_space = [range(max(low,0), min(high+1,2*num_course_sky_map_bins)) for (low, high) in zip(((vector + 1 - radius) * num_course_sky_map_bins).astype(int),
+                                                                                                       ((vector + 1 + radius) * num_course_sky_map_bins).astype(int))]
     # iterate over hash code space, looking up partitions of the sky map that are within range of the given vector
     for hash_code in itertools.product(*hash_code_space):
       # iterate over the stars in the given partition, adding them to
@@ -329,7 +329,7 @@ if read_failed or str(parameters) != stored_parameters:
       if len(get_nearby_stars_pruned_course(vector, max_fov_rad / 2)) >= max_stars_per_fov:
         continue
       # find which partition the star occupies in the hash table
-      hash_code = tuple(((vector+1)*num_course_sky_map_bins).astype(np.int))
+      hash_code = tuple(((vector+1)*num_course_sky_map_bins).astype(int))
       # if the partition is empty, create a new list to hold the star
       # if the partition already contains stars, add the star to the list
       pruned_course_sky_map[hash_code] = pruned_course_sky_map.pop(hash_code, []) + [star_id]
@@ -340,7 +340,7 @@ if read_failed or str(parameters) != stored_parameters:
     pattern = [None] * pattern_size
     for pattern[0] in star_ids_pruned:
       # find which partition the star occupies in the sky hash table
-      hash_code = tuple(np.floor((star_table[pattern[0]]+1)*num_course_sky_map_bins).astype(np.int))
+      hash_code = tuple(np.floor((star_table[pattern[0]]+1)*num_course_sky_map_bins).astype(int))
       # remove the star from the sky hash table
       pruned_course_sky_map[hash_code].remove(pattern[0])
       # iterate over all possible patterns containing the removed star
@@ -368,7 +368,7 @@ if read_failed or str(parameters) != stored_parameters:
     # divide the edges by the largest edge to create dimensionless ratios
     edge_ratios = edges[:-1] / largest_edge
     # convert edge ratio float to hash code by binning
-    hash_code = tuple((edge_ratios * num_catalog_bins).astype(np.int))
+    hash_code = tuple((edge_ratios * num_catalog_bins).astype(int))
     hash_index = hash_code_to_index(hash_code, num_catalog_bins, pattern_catalog.shape[0])
     # use quadratic probing to find an open space in the pattern catalog to insert the pattern in
     for index in ((hash_index + offset ** 2) % pattern_catalog.shape[0] for offset in itertools.count()):
@@ -537,8 +537,8 @@ def tetra(image_file_name):
       # divide the pattern's edges by the largest edge to create dimensionless ratios for lookup in the catalog
       pattern_edge_ratios = pattern_edges[:-1] / pattern_largest_edge
       # given error of at most max_error in the edge_ratios, compute the space of hash codes to lookup in the catalog
-      hash_code_space = [range(max(low,0), min(high+1,num_catalog_bins)) for (low, high) in zip(((pattern_edge_ratios - max_error) * num_catalog_bins).astype(np.int),
-                                                                                                ((pattern_edge_ratios + max_error) * num_catalog_bins).astype(np.int))]
+      hash_code_space = [range(max(low,0), min(high+1,num_catalog_bins)) for (low, high) in zip(((pattern_edge_ratios - max_error) * num_catalog_bins).astype(int),
+                                                                                                ((pattern_edge_ratios + max_error) * num_catalog_bins).astype(int))]
       # iterate over hash code space, only looking up non-duplicate codes that are in sorted order
       for hash_code in set([tuple(sorted(code)) for code in itertools.product(*hash_code_space)]):
         hash_code = tuple(hash_code)
@@ -620,8 +620,8 @@ def tetra(image_file_name):
             # retrieve matching catalog vectors for each image vector
             catalog_vectors = []
             for rotated_star_vector in rotated_star_vectors:
-              hash_code_space = [range(max(low,0), min(high+1,2*num_fine_sky_map_bins)) for (low, high) in zip(((rotated_star_vector + 1 - match_radius) * num_fine_sky_map_bins).astype(np.int),
-                                                                                                               ((rotated_star_vector + 1 + match_radius) * num_fine_sky_map_bins).astype(np.int))]
+              hash_code_space = [range(max(low,0), min(high+1,2*num_fine_sky_map_bins)) for (low, high) in zip(((rotated_star_vector + 1 - match_radius) * num_fine_sky_map_bins).astype(int),
+                                                                                                               ((rotated_star_vector + 1 + match_radius) * num_fine_sky_map_bins).astype(int))]
               # iterate over hash code space, only looking up non-duplicate codes that are in sorted order
               matching_stars = []
               for hash_code in [code for code in itertools.product(*hash_code_space)]:
