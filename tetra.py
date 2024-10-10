@@ -407,7 +407,7 @@ def tetra(image_file_name):
   # downsample image for median filtering
   downsampled_image = image.reshape((height//downsample_factor,downsample_factor,width//downsample_factor,downsample_factor)).mean(axis=3).mean(axis=1)
   # apply median filter to downsampled image
-  median_filtered_image = scipy.ndimage.filters.median_filter(downsampled_image, size=filter_width, output=image.dtype)
+  median_filtered_image = scipy.ndimage.median_filter(downsampled_image, size=filter_width, output=image.dtype)
   # upsample median filtered image back to original image size
   upsampled_median_filtered_image = median_filtered_image.repeat(downsample_factor, axis=0).repeat(downsample_factor, axis=1)
   # subtract the minimum of the image pixel and the local median to prevent values less than 0
