@@ -651,8 +651,9 @@ def tetra(image_file_name):
             matches = []
             for (catalog_vector, image_vector) in matches_hash.items():
               # filter out catalog stars with multiple image star matches
-              if image_vector == "multiple matches":
-                continue
+              if isinstance(image_vector, str):
+                if image_vector == "multiple matches":
+                  continue
               matches.append((image_vector, np.array(catalog_vector)))
             return matches
           
