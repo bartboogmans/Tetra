@@ -102,8 +102,9 @@ def hash_code_to_index(hash_code, bins_per_dimension, hash_table_size):
   integer_hash_code = sum(hash_code[i] * bins_per_dimension ** i for i in range(len(hash_code)))
   # randomize the hash code by multiplying by the avalanching constant
   # take the result modulo the table size to give a random index
-  index = (integer_hash_code * avalanche_constant) % hash_table_size
+  index = integer_hash_code * avalanche_constant % int(hash_table_size)
   return index
+
   
 # find all stars within a radius centered on the given vector using the compressed course sky map
 def get_nearby_stars_compressed_course(vector, radius):
